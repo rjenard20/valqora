@@ -1,0 +1,1449 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VALQORA | Checkout</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="valqora.css">
+
+<style>
+
+/* ==============================
+   GCASH PAYMENT POPUP
+============================== */
+
+#gcash-payment-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 15px;
+}
+
+#gcash-payment-modal.active {
+    display: flex;
+}
+
+.gcash-payment-content {
+    width: 100%;
+    max-width: 440px;
+    background: #f5f8fc;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    animation: gcashPopup 0.25s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes gcashPopup {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gcash-header {
+    background: #007dfe;
+    color: white;
+    padding: 25px 20px;
+    text-align: center;
+}
+
+.gcash-logo {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.gcash-logo span {
+    color: #b9e8ff;
+}
+
+.gcash-header p {
+    margin: 7px 0 0;
+    font-size: 13px;
+}
+
+.gcash-body {
+    padding: 25px;
+}
+
+.gcash-merchant {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.gcash-merchant small {
+    color: #777;
+    font-size: 12px;
+}
+
+.gcash-merchant h3 {
+    margin: 6px 0;
+    color: #222;
+    font-size: 20px;
+}
+
+/* PAYMENT BREAKDOWN */
+
+.gcash-amount {
+    background: white;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #e5eaf0;
+}
+
+.gcash-amount > small {
+    color: #777;
+    font-size: 12px;
+}
+
+.gcash-breakdown {
+    margin-top: 15px;
+}
+
+.gcash-product-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.gcash-product-row span:first-child {
+    max-width: 65%;
+}
+
+.gcash-product-row strong {
+    white-space: nowrap;
+}
+
+.gcash-breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #444;
+}
+
+.gcash-total-row {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.gcash-total-row strong {
+    font-size: 14px;
+    color: #222;
+}
+
+.gcash-total-row h2 {
+    color: #007dfe;
+    font-size: 23px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* MOBILE NUMBER */
+
+.gcash-field {
+    margin-bottom: 18px;
+}
+
+.gcash-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.gcash-field input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d5dce5;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.gcash-field input:focus {
+    border-color: #007dfe;
+}
+
+.gcash-info {
+    background: #e8f3ff;
+    color: #315b82;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* BUTTONS */
+
+.gcash-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#gcash-continue {
+    background: #007dfe;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#gcash-continue:hover,
+#gcash-done:hover {
+    background: #0066d2;
+}
+
+#gcash-cancel {
+    background: transparent;
+    color: #555;
+    border: 1px solid #d5dce5;
+    padding: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#gcash-cancel:hover {
+    background: #edf1f5;
+}
+
+.gcash-demo-note {
+    text-align: center;
+    font-size: 10px;
+    color: #888;
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+/* CONFIRMATION SCREEN */
+
+.gcash-success {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.gcash-success-icon {
+    width: 65px;
+    height: 65px;
+    background: #e0f7e9;
+    color: #20a45a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    margin: 0 auto 15px;
+}
+
+.gcash-success h3 {
+    color: #222;
+    margin-bottom: 8px;
+}
+
+.gcash-success p {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+}
+
+#gcash-done {
+    width: 100%;
+    margin-top: 15px;
+    padding: 13px;
+    background: #007dfe;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+@media(max-width: 480px) {
+    .gcash-body {
+        padding: 20px;
+    }
+
+    .gcash-logo {
+        font-size: 28px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<section id="header">
+    <img src="img/logo.png" alt="VALQORA Logo">
+</section>
+
+
+<!-- CHECKOUT -->
+
+<section id="checkout">
+
+    <h1>CHECKOUT</h1>
+
+    <div class="checkout-container">
+
+        <form class="checkout-info" id="checkout-form" action="checkout.php" method="POST">
+
+            <h2>Shipping Information</h2>
+
+            <div class="form-row">
+
+                <div>
+                    <label for="firstname">First Name</label>
+                    <input type="text" id="firstname" name="firstname" placeholder="First Name" required>
+                </div>
+
+                <div>
+                    <label for="lastname">Last Name</label>
+                    <input type="text" id="lastname" name="lastname" placeholder="Last Name" required>
+                </div>
+
+            </div>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Email Address" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phone" placeholder="Phone Number" required>
+
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" placeholder="House No. / Street" required>
+
+            <div class="form-row">
+
+                <div>
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" placeholder="City" required>
+                </div>
+
+                <div>
+                    <label for="postal">Postal Code</label>
+                    <input type="text" id="postal" name="postal" placeholder="Postal Code" required>
+                </div>
+
+            </div>
+
+            <h2>Payment Method</h2>
+
+            <div class="payment-method">
+
+                <label>
+                    <input type="radio" name="payment" value="cod" checked>
+                    Cash on Delivery
+                </label>
+
+                <label>
+                    <input type="radio" name="payment" value="gcash">
+                    GCash
+                </label>
+
+                <label>
+                    <input type="radio" name="payment" value="card">
+                    Credit / Debit Card
+                </label>
+
+            </div>
+
+            <!-- HIDDEN PRODUCT INFORMATION -->
+
+            <input type="hidden" name="product_id" id="product_id" value="">
+            <input type="hidden" name="product_size" id="product_size" value="">
+            <input type="hidden" name="product_quantity" id="product_quantity" value="1">
+
+            <button type="submit" id="place-order">
+                PLACE ORDER
+            </button>
+
+        </form>
+
+
+        <!-- ORDER SUMMARY -->
+
+        <div class="order-summary">
+
+            <div id="checkout-product"></div>
+
+            <hr>
+
+            <div>
+                <span><b>Status:</b> Pre-Oreder</span>
+            </div>
+
+            <div class="checkout-row">
+                <span>Subtotal</span>
+                <span id="checkout-subtotal">₱0.00</span>
+            </div>
+
+            <div class="checkout-row">
+                <span>Shipping</span>
+                <span id="checkout-shipping">₱100.00</span>
+            </div>
+
+            <hr>
+
+            <div class="checkout-total">
+                <span>Total</span>
+                <span id="checkout-total">₱0.00</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==============================
+     GCASH PAYMENT POPUP
+============================== -->
+
+<div id="gcash-payment-modal">
+
+    <div class="gcash-payment-content">
+
+        <div class="gcash-header">
+
+            <div class="gcash-logo">
+                GCash<span>.</span>
+            </div>
+
+            <p>Payment Method</p>
+
+        </div>
+
+        <div class="gcash-body">
+
+            <!-- PAYMENT SCREEN -->
+
+            <div id="gcash-payment-screen">
+
+                <div class="gcash-merchant">
+
+                    <small>PAYMENT TO</small>
+
+                    <h3>VALQORA</h3>
+
+                    <small>Online Shopping</small>
+
+                </div>
+
+
+                <!-- PAYMENT BREAKDOWN -->
+
+                <div class="gcash-amount">
+
+                    <small>Payment Breakdown</small>
+
+                    <div class="gcash-breakdown" id="gcash-product-breakdown">
+                    </div>
+
+                    <div class="gcash-breakdown-row">
+                        <span>Subtotal</span>
+                        <span id="gcash-subtotal">₱0.00</span>
+                    </div>
+
+                    <div class="gcash-breakdown-row">
+                        <span>Shipping Fee</span>
+                        <span id="gcash-shipping">₱100.00</span>
+                    </div>
+
+                    <div class="gcash-total-row">
+                        <strong>Total Payment</strong>
+                        <h2 id="gcash-payment-amount">₱0.00</h2>
+                    </div>
+
+                </div>
+
+
+                <!-- MOBILE NUMBER -->
+
+                <div class="gcash-field">
+
+                    <label for="gcash-mobile-number">
+                        GCash-Registered Mobile Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="gcash-mobile-number"
+                        placeholder="09XXXXXXXXX"
+                        maxlength="11"
+                        inputmode="numeric"
+                    >
+
+                </div>
+
+                <div class="gcash-info">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    Enter the mobile number associated with your GCash account.
+
+                    This demonstration does not request your MPIN or OTP.
+
+                </div>
+
+                <div class="gcash-buttons">
+
+                    <button type="button" id="gcash-continue">
+                        CONTINUE
+                    </button>
+
+                    <button type="button" id="gcash-cancel">
+                        CANCEL
+                    </button>
+
+                </div>
+
+                <p class="gcash-demo-note">
+                    DEMONSTRATION INTERFACE — NO ACTUAL PAYMENT WILL BE PROCESSED.
+                </p>
+
+            </div>
+
+
+            <!-- GCASH CONFIRMATION SCREEN -->
+
+            <div class="gcash-success" id="gcash-success-screen">
+
+                <div class="gcash-success-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+
+                <h3>GCash Selected!</h3>
+
+                <p>
+                    Your GCash payment method has been selected successfully.
+                    You can now proceed with placing your order.
+                </p>
+
+                <p>
+                    <strong>Mobile Number:</strong>
+                    <span id="gcash-confirmed-number"></span>
+                </p>
+
+                <p>
+                    <strong>Total Payment:</strong>
+                    <span id="gcash-confirmed-total"></span>
+                </p>
+
+                <button type="button" id="gcash-done">
+                    CONTINUE TO CHECKOUT
+                </button>
+
+                <p class="gcash-demo-note">
+                    No payment has been made. Actual payment requires a connected payment gateway.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   CHECKOUT ELEMENTS
+========================= */
+
+const checkoutForm =
+    document.getElementById("checkout-form");
+
+const checkoutProduct =
+    document.getElementById("checkout-product");
+
+const checkoutSubtotal =
+    document.getElementById("checkout-subtotal");
+
+const checkoutShipping =
+    document.getElementById("checkout-shipping");
+
+const checkoutTotal =
+    document.getElementById("checkout-total");
+
+
+/* =========================
+   LOAD CART AND BUY NOW
+========================= */
+
+const cart = JSON.parse(
+    localStorage.getItem("valqoraCart")
+) || [];
+
+const buyNow = JSON.parse(
+    localStorage.getItem("valqoraBuyNow")
+);
+
+let checkoutItems = [];
+
+
+/*
+   IMPORTANT FIX:
+
+   cart.html saves selected products
+   as an ARRAY in valqoraBuyNow.
+
+   This code supports both:
+   1. Multiple selected products (array)
+   2. A single product (object)
+*/
+
+if (Array.isArray(buyNow)) {
+
+    checkoutItems = buyNow;
+
+} else if (buyNow && typeof buyNow === "object") {
+
+    checkoutItems = [buyNow];
+
+} else {
+
+    checkoutItems = cart;
+
+}
+
+
+/* =========================
+   FORMAT PRICE
+========================= */
+
+function formatPeso(price) {
+
+    return "₱" + Number(price).toLocaleString(
+        "en-PH",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+
+}
+
+
+/* =========================
+   AVAILABLE PRODUCT SIZES
+========================= */
+
+const availableSizes = ["S", "M", "L", "XL"];
+
+
+/* =========================
+   GCASH POPUP ELEMENTS
+========================= */
+
+const gcashPaymentModal =
+    document.getElementById("gcash-payment-modal");
+
+const gcashPaymentAmount =
+    document.getElementById("gcash-payment-amount");
+
+const gcashMobileNumber =
+    document.getElementById("gcash-mobile-number");
+
+const gcashContinue =
+    document.getElementById("gcash-continue");
+
+const gcashCancel =
+    document.getElementById("gcash-cancel");
+
+const gcashDone =
+    document.getElementById("gcash-done");
+
+const gcashPaymentScreen =
+    document.getElementById("gcash-payment-screen");
+
+const gcashSuccessScreen =
+    document.getElementById("gcash-success-screen");
+
+const gcashConfirmedNumber =
+    document.getElementById("gcash-confirmed-number");
+
+const gcashConfirmedTotal =
+    document.getElementById("gcash-confirmed-total");
+
+
+let gcashNumber = "";
+
+
+/* =========================
+   GCASH PAYMENT BREAKDOWN
+========================= */
+
+function updateGcashBreakdown() {
+
+    const breakdown =
+        document.getElementById("gcash-product-breakdown");
+
+    const gcashSubtotal =
+        document.getElementById("gcash-subtotal");
+
+    const gcashShipping =
+        document.getElementById("gcash-shipping");
+
+
+    breakdown.innerHTML = "";
+
+    let subtotal = 0;
+
+
+    checkoutItems.forEach(function(product) {
+
+        const price =
+            Number(product.price) || 0;
+
+        let quantity =
+            Number(product.quantity) || 1;
+
+        if (quantity < 1) quantity = 1;
+        if (quantity > 15) quantity = 15;
+
+
+        const productTotal =
+            price * quantity;
+
+        subtotal += productTotal;
+
+
+        const productRow =
+            document.createElement("div");
+
+        productRow.className =
+            "gcash-product-row";
+
+
+        const productName =
+            document.createElement("span");
+
+        productName.textContent =
+            (product.name || "Product") + " × " + quantity;
+
+
+        const productPrice =
+            document.createElement("strong");
+
+        productPrice.textContent =
+            formatPeso(productTotal);
+
+
+        productRow.appendChild(productName);
+        productRow.appendChild(productPrice);
+
+        breakdown.appendChild(productRow);
+
+    });
+
+
+    const shipping =
+        checkoutItems.length === 0 ? 0 : 100;
+
+    const total =
+        subtotal + shipping;
+
+
+    gcashSubtotal.textContent =
+        formatPeso(subtotal);
+
+    gcashShipping.textContent =
+        formatPeso(shipping);
+
+    gcashPaymentAmount.textContent =
+        formatPeso(total);
+
+    gcashConfirmedTotal.textContent =
+        formatPeso(total);
+
+}
+
+
+/* =========================
+   OPEN GCASH POPUP
+========================= */
+
+function openGcashPopup() {
+
+    updateCheckoutTotal();
+
+    updateGcashBreakdown();
+
+    gcashPaymentScreen.style.display = "block";
+
+    gcashSuccessScreen.style.display = "none";
+
+    gcashPaymentModal.classList.add("active");
+
+    document.body.style.overflow = "hidden";
+
+}
+
+
+/* =========================
+   CLOSE GCASH POPUP
+========================= */
+
+function closeGcashPopup() {
+
+    gcashPaymentModal.classList.remove("active");
+
+    document.body.style.overflow = "";
+
+}
+
+
+/* =========================
+   PAYMENT METHOD SELECTION
+========================= */
+
+document.querySelectorAll('input[name="payment"]')
+.forEach(function(input) {
+
+    input.addEventListener("change", function() {
+
+        if (this.value === "gcash") {
+
+            openGcashPopup();
+
+        } else {
+
+            closeGcashPopup();
+
+            gcashNumber = "";
+
+        }
+
+    });
+
+});
+
+
+/* =========================
+   GCASH CONTINUE
+========================= */
+
+gcashContinue.addEventListener("click", function() {
+
+    const mobileNumber =
+        gcashMobileNumber.value.trim();
+
+
+    if (!/^09[0-9]{9}$/.test(mobileNumber)) {
+
+        alert(
+            "Please enter a valid 11-digit Philippine mobile number starting with 09."
+        );
+
+        gcashMobileNumber.focus();
+
+        return;
+
+    }
+
+
+    gcashNumber = mobileNumber;
+
+    gcashConfirmedNumber.textContent =
+        gcashNumber;
+
+    gcashConfirmedTotal.textContent =
+        gcashPaymentAmount.textContent;
+
+
+    gcashPaymentScreen.style.display = "none";
+
+    gcashSuccessScreen.style.display = "block";
+
+});
+
+
+/* =========================
+   GCASH CANCEL
+========================= */
+
+gcashCancel.addEventListener("click", function() {
+
+    closeGcashPopup();
+
+    document.querySelector(
+        'input[name="payment"][value="cod"]'
+    ).checked = true;
+
+    gcashNumber = "";
+
+});
+
+
+/* =========================
+   FINISH GCASH SELECTION
+========================= */
+
+gcashDone.addEventListener("click", function() {
+
+    closeGcashPopup();
+
+});
+
+
+/* =========================
+   CLICK OUTSIDE POPUP
+========================= */
+
+gcashPaymentModal.addEventListener("click", function(event) {
+
+    if (event.target === gcashPaymentModal) {
+
+        closeGcashPopup();
+
+    }
+
+});
+
+
+/* =========================
+   ESCAPE KEY
+========================= */
+
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.key === "Escape" &&
+        gcashPaymentModal.classList.contains("active")
+    ) {
+
+        closeGcashPopup();
+
+    }
+
+});
+
+
+/* =========================
+   DISPLAY CHECKOUT PRODUCTS
+========================= */
+
+function displayCheckoutProducts() {
+
+    if (!checkoutProduct) return;
+
+    checkoutProduct.innerHTML = "";
+
+
+    if (checkoutItems.length === 0) {
+
+        checkoutProduct.innerHTML = `
+            <div class="empty-checkout">
+                <h3>Your order is empty.</h3>
+                <p>Please add a product to your cart.</p>
+            </div>
+        `;
+
+        updateCheckoutTotal();
+
+        return;
+
+    }
+
+
+    checkoutItems.forEach(function(product, index) {
+
+        const price =
+            Number(product.price) || 0;
+
+        let quantity =
+            Number(product.quantity) || 1;
+
+        if (quantity < 1) quantity = 1;
+        if (quantity > 15) quantity = 15;
+
+
+        const productTotal =
+            price * quantity;
+
+
+        const image =
+            product.image || "";
+
+        const name =
+            product.name || "Product";
+
+        const size =
+            product.size || "M";
+
+        const description =
+            product.description || "";
+
+
+        // PRESERVE EXISTING PRODUCT SIZE
+
+        const productSizes =
+            [...availableSizes];
+
+        if (
+            size !== "N/A" &&
+            !productSizes.includes(size)
+        ) {
+
+            productSizes.push(size);
+
+        }
+
+
+        const productDiv =
+            document.createElement("div");
+
+        productDiv.className =
+            "checkout-product";
+
+
+        productDiv.innerHTML = `
+
+            <div class="checkout-product-image">
+
+                <img src="${image}" alt="${name}">
+
+            </div>
+
+
+            <div class="checkout-product-info">
+
+                <h3>${name}</h3>
+
+                <p>
+                    Price: ${formatPeso(price)}
+                </p>
+
+                <p>Size:</p>
+
+                <select aria-label="Select product size">
+
+                    ${productSizes.map(function(s) {
+
+                        return `
+                            <option value="${s}" ${s === size ? "selected" : ""}>
+                                ${s}
+                            </option>
+                        `;
+
+                    }).join("")}
+
+                </select>
+
+                <p>Quantity: ${quantity}</p>
+
+                ${description ? `<p>${description}</p>` : ""}
+
+                <p>
+                    <strong>Product Total:</strong>
+                    ${formatPeso(productTotal)}
+                </p>
+
+            </div>
+
+        `;
+
+
+        checkoutProduct.appendChild(productDiv);
+
+
+        /* =========================
+           UPDATE PRODUCT SIZE
+        ========================= */
+
+        const sizeDropdown =
+            productDiv.querySelector("select");
+
+
+        sizeDropdown.addEventListener("change", function() {
+
+            checkoutItems[index].size =
+                this.value;
+
+
+            /*
+               IMPORTANT FIX:
+
+               Save the COMPLETE selected-products
+               ARRAY instead of saving only the first
+               product.
+            */
+
+            if (buyNow !== null) {
+
+                localStorage.setItem(
+                    "valqoraBuyNow",
+                    JSON.stringify(checkoutItems)
+                );
+
+            } else {
+
+                localStorage.setItem(
+                    "valqoraCart",
+                    JSON.stringify(checkoutItems)
+                );
+
+            }
+
+        });
+
+    });
+
+
+    updateCheckoutTotal();
+
+    updateGcashBreakdown();
+
+}
+
+
+/* =========================
+   UPDATE CHECKOUT TOTAL
+========================= */
+
+function updateCheckoutTotal() {
+
+    let subtotal = 0;
+
+
+    checkoutItems.forEach(function(product) {
+
+        const price =
+            Number(product.price) || 0;
+
+        let quantity =
+            Number(product.quantity) || 1;
+
+        if (quantity < 1) quantity = 1;
+        if (quantity > 15) quantity = 15;
+
+
+        subtotal += price * quantity;
+
+    });
+
+
+    const shipping =
+        checkoutItems.length === 0 ? 0 : 100;
+
+    const total =
+        subtotal + shipping;
+
+
+    if (checkoutSubtotal) {
+
+        checkoutSubtotal.textContent =
+            formatPeso(subtotal);
+
+    }
+
+
+    if (checkoutShipping) {
+
+        checkoutShipping.textContent =
+            formatPeso(shipping);
+
+    }
+
+
+    if (checkoutTotal) {
+
+        checkoutTotal.textContent =
+            formatPeso(total);
+
+    }
+
+}
+
+
+/* =========================
+   PLACE ORDER
+========================= */
+
+checkoutForm.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+
+    const firstname =
+        document.getElementById("firstname").value.trim();
+
+    const lastname =
+        document.getElementById("lastname").value.trim();
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const address =
+        document.getElementById("address").value.trim();
+
+    const city =
+        document.getElementById("city").value.trim();
+
+    const postal =
+        document.getElementById("postal").value.trim();
+
+
+    const paymentInput =
+        document.querySelector('input[name="payment"]:checked');
+
+
+    if (!paymentInput) {
+
+        alert("Please select a payment method.");
+
+        return;
+
+    }
+
+
+    const payment =
+        paymentInput.value;
+
+
+    if (checkoutItems.length === 0) {
+
+        alert("Your order is empty.");
+
+        return;
+
+    }
+
+
+    /* =========================
+       REQUIRE GCASH DETAILS
+    ========================= */
+
+    if (payment === "gcash" && !gcashNumber) {
+
+        openGcashPopup();
+
+        alert("Please complete the GCash payment details first.");
+
+        return;
+
+    }
+
+
+    /* =========================
+       ENSURE PRODUCT SIZES
+    ========================= */
+
+    checkoutItems.forEach(function(product, index) {
+
+        const sizeDropdown =
+            checkoutProduct.children[index]?.querySelector("select");
+
+        if (sizeDropdown) {
+
+            product.size = sizeDropdown.value;
+
+        }
+
+    });
+
+
+    /* =========================
+       PREPARE ORDER DATA
+    ========================= */
+
+    const order = {
+
+        customer: {
+
+            firstname: firstname,
+
+            lastname: lastname,
+
+            email: email,
+
+            phone: phone,
+
+            address: address,
+
+            city: city,
+
+            postal: postal
+
+        },
+
+        payment: payment,
+
+        products: checkoutItems
+
+    };
+
+
+    /* =========================
+       INCLUDE GCASH NUMBER
+    ========================= */
+
+    if (payment === "gcash") {
+
+        order.gcash_number = gcashNumber;
+
+    }
+
+
+    console.log("ORDER BEING SENT:", order);
+
+
+    /* =========================
+       SEND ORDER TO PHP
+    ========================= */
+
+    const placeOrderButton =
+        document.getElementById("place-order");
+
+    placeOrderButton.disabled = true;
+
+    placeOrderButton.textContent = "PROCESSING...";
+
+
+    fetch("save_order.php", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify(order)
+
+    })
+
+
+    .then(async function(response) {
+
+        const text = await response.text();
+
+        console.log("SERVER RESPONSE:", text);
+
+
+        try {
+
+            return JSON.parse(text);
+
+        } catch(error) {
+
+            throw new Error(
+                "Server returned invalid response: " + text
+            );
+
+        }
+
+    })
+
+
+    .then(function(data) {
+
+        console.log("PHP DATA:", data);
+
+
+        if (data.success) {
+
+            alert(
+                "Order placed successfully!\n\nOrder #" + data.order_id
+            );
+
+
+            localStorage.removeItem("valqoraCart");
+
+            localStorage.removeItem("valqoraBuyNow");
+
+
+            window.location.href = "home.html";
+
+        } else {
+
+            alert(
+                "Order failed:\n\n" +
+                (data.message || "Unknown error") +
+                "\n\nError:\n" +
+                (data.error || "No additional error.")
+            );
+
+            placeOrderButton.disabled = false;
+
+            placeOrderButton.textContent = "PLACE ORDER";
+
+        }
+
+    })
+
+
+    .catch(function(error) {
+
+        console.error("FETCH ERROR:", error);
+
+        alert(
+            "Something went wrong.\n\n" +
+            error.message
+        );
+
+        placeOrderButton.disabled = false;
+
+        placeOrderButton.textContent = "PLACE ORDER";
+
+    });
+
+});
+
+
+/* =========================
+   START CHECKOUT
+========================= */
+
+displayCheckoutProducts();
+
+</script>
+
+</body>
+</html>
